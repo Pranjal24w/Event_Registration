@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-info px-3">
+    <span class="navbar-brand">Faculty - {{ name }}</span>
+    <a href="/logout" class="btn btn-light btn-sm">Logout</a>
+</nav>
+
+<div class="container mt-4">
+
+    <!-- ✅ Faculty Personal Details Section -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Faculty Personal Details</h5>
+        </div>
+        <div class="card-body">
+            {% if faculty_details %}
+            <div class="row mb-2">
+                <div class="col-md-6"><strong>Name:</strong> {{ faculty_details.name }}</div>
+                <div class="col-md-6"><strong>Email:</strong> {{ faculty_details.email }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><strong>Phone:</strong> {{ faculty_details.phone }}</div>
+                <div class="col-md-6"><strong>Department:</strong> {{ faculty_details.department }}</div>
+            </div>
+            <div class="row">
+                <div class="col-md-6"><strong>Role:</strong> {{ faculty_details.role }}</div>
+                <div class="col-md-6"><strong>User ID:</strong> {{ faculty_details.user_id }}</div>
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">Faculty details not available.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ✅ Assigned Events Table -->
+    <h4>Assigned Events</h4>
+    {% if assigned_events and assigned_events|length > 0 %}
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Sr. No.</th>
+                <th>Event Name</th>
+                <th>Department</th>
+                <th>Host Committee</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ev in assigned_events %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ ev.event_name }}</td>
+            <td>{{ ev.department }}</td>
+            <td>{{ ev.host_committee }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No events assigned yet.</p>
+    {% endif %}
+
+    <!-- ✅ Registered Students Table -->
+    <h4 class="mt-4">Registered Students</h4>
+    {% if data and data|length > 0 %}
+    <a href="/export/faculty" class="btn btn-outline-dark btn-sm mb-3">Export Excel</a>
+
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Sr. No.</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Year</th>
+                <th>Event</th>
+                <th>Payment Status</th>
+                <th>Attendance</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for d in data %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ d.name }}</td>
+            <td>{{ d.department }}</td>
+            <td>{{ d.year }}</td>
+            <td>{{ d.event_name }}</td>
+            <td>{{ d.payment_status }}</td>
+
+            <!-- ✅ Attendance Control -->
+            <td>
+                <form method="POST" class="d-inline">
+                    <input type="hidden" name="toggle_attendance" value="1">
+                    <input type="hidden" name="student_name" value="{{ d.name }}">
+                    <input type="hidden" name="event_name" value="{{ d.event_name }}">
+                    <input type="hidden" name="current_status" value="{{ d.attendance_status }}">
+
+                    {% if d.attendance_status == 'Present' %}
+                        <button type="submit" class="btn btn-success btn-sm w-100">Present ✓</button>
+                    {% elif d.attendance_status == 'Absent' %}
+                        <button type="submit" class="btn btn-danger btn-sm w-100">Absent ✗</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-warning btn-sm w-100">Mark Attendance</button>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No student registrations found for your assigned events.</p>
+    {% endif %}
+</div>
+
+<!-- ✅ Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

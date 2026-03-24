@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-primary px-3">
+    <span class="navbar-brand">Welcome, {{ name }}</span>
+    <a href="/logout" class="btn btn-light btn-sm">Logout</a>
+</nav>
+
+<div class="container mt-4">
+    <!-- ====== AVAILABLE EVENTS ====== -->
+    <h4>Available Events</h4>
+    <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Event Name</th>
+                <th>Committee</th>
+                <th>Department</th>
+                <th>Description</th>
+                <th>Fee</th>
+                <th>Dates</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for e in events %}
+        <tr>
+            <td>{{ e.event_name }}</td>
+            <td>{{ e.host_committee }}</td>
+            <td>{{ e.department }}</td>
+            <td>{{ e.description }}</td>
+            <td>{{ e.fees }}</td>
+            <td>{{ e.start_date }} - {{ e.end_date }}</td>
+            <td>
+                <form method="POST">
+                    <input type="hidden" name="event_id" value="{{ e.event_id }}">
+                    <button class="btn btn-sm btn-success">Register</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- ====== MY EVENTS ====== -->
+    <h4 class="mt-5">My Registered Events</h4>
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Event Name</th>
+                <th>Committee</th>
+                <th>Department</th>
+                <th>Payment Status</th>
+                <th>Attendance Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for m in my_events %}
+        <tr>
+            <td>{{ m.event_name }}</td>
+            <td>{{ m.host_committee }}</td>
+            <td>{{ m.department }}</td>
+            <td>{{ m.payment_status }}</td>
+            <td>{{ m.attendance_status }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
